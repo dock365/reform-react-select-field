@@ -1,0 +1,54 @@
+{
+  "name": "@dock365/reform-react-select-field",
+  "version": "0.0.2",
+  "description": "React Select implementation from reform",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "build-watch": "tsc --watch",
+    "release": "npm run build && npm publish --access=public && git push --follow-tags",
+    "patch-release": "npm run build && npm version patch && npm publish --access=public && git push --follow-tags",
+    "minor-release": "npm run build && npm version minor && npm publish --access=public && git push --follow-tags",
+    "major-release": "npm run build && npm version major && npm publish --access=public && git push --follow-tags",
+    "preminor-release": "npm run build && npm version preminor && npm publish --access=public && git push --follow-tags",
+    "prerelease": "npm run build && npm version prerelease && npm publish --access=public && git push --follow-tags",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dock365/reform-react-select-feild.git"
+  },
+  "keywords": [
+    "react",
+    "reform",
+    "select",
+    "field",
+    "form"
+  ],
+  "author": "Hafeez Hamza <hafeez1042@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dock365/reform-react-select-feild/issues"
+  },
+  "homepage": "https://github.com/dock365/reform-react-select-feild#readme",
+  "devDependencies": {
+    "@braces/tslint-config": "^0.3.1",
+    "@dock365/reform": "^0.11.6-5",
+    "@types/react": "^16.3.2",
+    "@types/react-dom": "^16.0.5",
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2",
+    "tslint": "^5.11.0",
+    "typescript": "^3.1.6"
+  },
+  "peerDependencies": {
+    "@dock365/reform": ">=0.7.0",
+    "react": ">=15.6",
+    "react-dom": ">=15.6"
+  },
+  "dependencies": {
+    "@types/react-select": "^3.0.0",
+    "react-select": "^3.0.4"
+  }
+}
