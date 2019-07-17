@@ -1,6 +1,6 @@
 {
   "name": "@dock365/reform-react-select-field",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "React Select implementation from reform",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
