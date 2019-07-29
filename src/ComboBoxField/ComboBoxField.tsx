@@ -30,8 +30,11 @@ class ComboBoxField extends React.Component<propsType, IComboBoxFieldState> {
 
   public componentDidMount() {
     if (this.props.value && this.props.customProps.options) {
+      const values = this.props.customProps && this.props.customProps.isMulti ?
+        this.props.value.map((id: string) => this.props.customProps.options.find((option: IReactSelectOption) => `${option.value}` === `${id}`)) :
+        [this.props.customProps.options.find((option: IReactSelectOption) => `${option.value}` === `${this.props.value}`)]
       this.setState({
-        values: this.props.value.map((id: string) => this.props.customProps.options.find((option: IReactSelectOption) => `${option.value}` === `${id}`)),
+        values,
       });
     }
   }
