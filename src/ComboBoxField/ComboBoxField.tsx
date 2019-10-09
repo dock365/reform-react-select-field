@@ -28,6 +28,17 @@ class ComboBoxField extends React.Component<propsType, IComboBoxFieldState> {
     this._onBlur = this._onBlur.bind(this);
   }
 
+  // public static getDerivedStateFromProps(props: propsType, state: IComboBoxFieldState) {
+  //   if (props.value && props.customProps.options) {
+  //     const values = props.customProps && props.customProps.isMulti ?
+  //       props.value.map((id: string) => props.customProps.options.find((option: IReactSelectOption) => `${option.value}` === `${id}`)) :
+  //       [props.customProps.options.find((option: IReactSelectOption) => `${option.value}` === `${props.value}`)]
+  //     return {
+  //       values,
+  //     };
+  //   }
+  // }
+
   public componentDidMount() {
     if (this.props.value && this.props.customProps.options) {
       const values = this.props.customProps && this.props.customProps.isMulti ?
@@ -44,8 +55,7 @@ class ComboBoxField extends React.Component<propsType, IComboBoxFieldState> {
       this.select.current.setState({ value: [] });
       if (this.props.onChange)
         this.props.onChange(this.props.customProps && this.props.customProps.isMulti ? [] : null);
-    }
-    if ((this.props.value && !prevProps.value) || (this.props.customProps.options.length !== prevProps.customProps.options.length)) {
+    } else if ((this.props.value ) || (this.props.value !== prevProps.value) || (this.props.customProps.options.length !== prevProps.customProps.options.length)) {
       this.setState({
         values: this.props.value && this.props.customProps && this.props.customProps.isMulti ?
           this.props.value.map((id: number) =>
