@@ -19,6 +19,7 @@ export type propsType = IFieldRenderProps & {
 
 class ComboBoxField extends React.Component<propsType, IComboBoxFieldState> {
   private select = React.createRef<any>();
+  private unknownOption = { value: undefined, label: "unknown" };
   constructor(props: propsType) {
     super(props);
     this.state = {
@@ -42,8 +43,8 @@ class ComboBoxField extends React.Component<propsType, IComboBoxFieldState> {
   public componentDidMount() {
     if (this.props.value && this.props.customProps.options) {
       const values = this.props.customProps && this.props.customProps.isMulti ?
-        this.props.value.map((id: string) => this.props.customProps.options.find((option: IReactSelectOption) => `${option.value}` === `${id}`)) :
-        [this.props.customProps.options.find((option: IReactSelectOption) => `${option.value}` === `${this.props.value}`)]
+        this.props.value.map((id: string) => this.props.customProps.options.find((option: IReactSelectOption) => `${option.value}` === `${id}`) || (id && this.unknownOption)) :
+        [this.props.customProps.options.find((option: IReactSelectOption) => `${option.value}` === `${this.props.value}`) || (this.props.value && this.unknownOption)]
       this.setState({
         values,
       });
@@ -60,12 +61,12 @@ class ComboBoxField extends React.Component<propsType, IComboBoxFieldState> {
         values: this.props.value && this.props.customProps && this.props.customProps.isMulti ?
           this.props.value.map((id: number) =>
             this.props.customProps.options &&
-            this.props.customProps.options.find((option: IReactSelectOption) => option.value === id)
+            this.props.customProps.options.find((option: IReactSelectOption) => option.value === id) ||
+            (id && this.unknownOption)
           ) :
-          [this.props.customProps.options.find((option: IReactSelectOption) => option.value === this.props.value)],
+          [this.props.customProps.options.find((option: IReactSelectOption) => option.value === this.props.value) || (this.props.value && this.unknownOption)],
       });
     }
-    console.log("updated")
   }
 
   public render(): JSX.Element {
