@@ -82,6 +82,7 @@ class ComboBoxField extends React.Component<propsType, IComboBoxFieldState> {
           options={this.props.customProps && this.props.customProps.options}
           onChange={this._onChange}
           onBlur={this._onBlur}
+          isClearable={this.props.customProps && this.props.customProps.isClearable}
           isDisabled={this.props.readOnly}
         />
         <FormFieldErrors errors={this.props.errors} />
