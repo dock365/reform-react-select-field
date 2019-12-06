@@ -14,12 +14,19 @@ export type propsType = IFieldRenderProps & {
     options: IReactSelectOption[];
     isMulti?: boolean;
     closeMenuOnSelect?: boolean;
+    isClearable?: boolean;
   }
 };
 
 class ComboBoxField extends React.Component<propsType, IComboBoxFieldState> {
   private select = React.createRef<any>();
   private unknownOption = { value: undefined, label: "unknown" };
+
+  public static defaultProps = {
+    customProps: {
+      options: []
+    }
+  }
   constructor(props: propsType) {
     super(props);
     this.state = {
@@ -56,7 +63,12 @@ class ComboBoxField extends React.Component<propsType, IComboBoxFieldState> {
       this.select.current.setState({ value: [] });
       if (this.props.onChange)
         this.props.onChange(this.props.customProps && this.props.customProps.isMulti ? [] : null);
-    } else if ((this.props.value && !prevProps.value) || (this.props.value !== prevProps.value) || (this.props.customProps.options.length !== prevProps.customProps.options.length)) {
+    } else if (
+      (this.props.value && !prevProps.value) ||
+      (this.props.value !== prevProps.value) ||
+      (this.props.customProps.options && !prevProps.customProps.options) ||
+      (this.props.customProps.options.length !== prevProps.customProps.options.length)
+    ) {
       this.setState({
         values: this.props.value && this.props.customProps && this.props.customProps.isMulti ?
           this.props.value.map((id: number) =>
