@@ -18,6 +18,7 @@ export interface IAsyncComboBoxFieldPropType extends IFieldRenderProps {
     isClearable?: boolean;
     loadOptions: (inputValue: string, callback: ((options: OptionsType<IReactSelectOption>) => void)) => Promise<any>;
     onInputChange: (newValue: string, actionMeta: InputActionMeta) => void;
+    selectedValue?: IReactSelectOption[];
   };
 }
 
@@ -34,56 +35,18 @@ class AsyncComboBoxField extends React.Component<IAsyncComboBoxFieldPropType, IC
   constructor(props: IAsyncComboBoxFieldPropType) {
     super(props);
     this.state = {
-      values: [],
+      values: this.props.customProps.selectedValue || [],
     };
     this._onChange = this._onChange.bind(this);
     this._onBlur = this._onBlur.bind(this);
   }
 
-  public componentDidMount() {
-    if (this.props.value && this.props.customProps.options) {
-      const values = this.props.customProps && this.props.customProps.isMulti ?
-        this.props.value.map((id: string) => {
-          return this.props.customProps.options
-              .find((option: IReactSelectOption) => `${option.value}` === `${id}`) ||
-            (id && this.unknownOption);
-        }) :
-        [
-          this.props.customProps.options
-            .find((option: IReactSelectOption) => `${option.value}` === `${this.props.value}`) ||
-          (this.props.value && this.unknownOption),
-        ];
-      this.setState({
-                      values,
-                    });
-    }
-  }
-
   public componentDidUpdate(prevProps: IAsyncComboBoxFieldPropType) {
-    if (!this.props.value && prevProps.value) {
-      this.select.current.setState({value: []});
-      if (this.props.onChange)
-        this.props.onChange(this.props.customProps && this.props.customProps.isMulti ? [] : null);
-    } else if (
-      (this.props.value && !prevProps.value) ||
-      (this.props.value !== prevProps.value) ||
-      (this.props.customProps.options && !prevProps.customProps.options) ||
-      (this.props.customProps.options.length !== prevProps.customProps.options.length)
+    if (
+      this.props.customProps.selectedValue &&
+      this.props.customProps.selectedValue !== prevProps.customProps.selectedValue
     ) {
-      this.setState({
-                      values: this.props.value && this.props.customProps && this.props.customProps.isMulti ?
-                        this.props.value.map((id: number) =>
-                                               this.props.customProps.options &&
-                                               this.props.customProps.options
-                                                 .find((option: IReactSelectOption) => option.value === id) ||
-                                               (id && this.unknownOption),
-                        ) :
-                        [
-                          this.props.customProps.options
-                            .find((option: IReactSelectOption) => option.value === this.props.value) ||
-                          (this.props.value && this.unknownOption),
-                        ],
-                    });
+      this.setState({values: this.props.customProps.selectedValue});
     }
   }
 
