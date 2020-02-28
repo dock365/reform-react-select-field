@@ -1,24 +1,27 @@
 import * as React from 'react';
 import { IComboBoxFieldState } from './IComboBoxFieldState';
 import Select from 'react-select';
+import AsyncSelect from 'react-select/async';
 import { IFieldRenderProps } from '@dock365/reform';
 import { FormFieldErrors } from '../FormFieldErrors/FormFieldErrors';
+import { InputActionMeta, OptionsType } from "react-select/src/types";
 
 export interface IReactSelectOption {
   label: string;
   value: string | number;
 }
 
-export interface IComboBoxFieldPropsType extends IFieldRenderProps  {
+export interface IAsyncComboBoxFieldPropType extends IFieldRenderProps {
   customProps: {
-    options: IReactSelectOption[];
     isMulti?: boolean;
     closeMenuOnSelect?: boolean;
     isClearable?: boolean;
+    loadOptions: (inputValue: string, callback: ((options: OptionsType<IReactSelectOption>) => void)) => Promise<any>;
+    onInputChange: (newValue: string, actionMeta: InputActionMeta) => void;
   };
 }
 
-class ComboBoxField extends React.Component<IComboBoxFieldPropsType, IComboBoxFieldState> {
+class AsyncComboBoxField extends React.Component<IAsyncComboBoxFieldPropType, IComboBoxFieldState> {
 
   public static defaultProps = {
     customProps: {
@@ -28,7 +31,7 @@ class ComboBoxField extends React.Component<IComboBoxFieldPropsType, IComboBoxFi
   private select = React.createRef<any>();
   private unknownOption = {value: undefined, label: "unknown"};
 
-  constructor(props: IComboBoxFieldPropsType) {
+  constructor(props: IAsyncComboBoxFieldPropType) {
     super(props);
     this.state = {
       values: [],
@@ -56,7 +59,7 @@ class ComboBoxField extends React.Component<IComboBoxFieldPropsType, IComboBoxFi
     }
   }
 
-  public componentDidUpdate(prevProps: IComboBoxFieldPropsType) {
+  public componentDidUpdate(prevProps: IAsyncComboBoxFieldPropType) {
     if (!this.props.value && prevProps.value) {
       this.select.current.setState({value: []});
       if (this.props.onChange)
@@ -88,13 +91,16 @@ class ComboBoxField extends React.Component<IComboBoxFieldPropsType, IComboBoxFi
     return (
       <div className="reformReactSelectField">
         {this.props.label && <label htmlFor="">{this.props.label}</label>}
-        <Select
+        <AsyncSelect
+          cacheOptions
+          loadOptions={this.props.customProps && this.props.customProps.loadOptions}
+          onInputChange={this.props.customProps && this.props.customProps.onInputChange}
+
           closeMenuOnSelect={this.props.customProps && this.props.customProps.closeMenuOnSelect}
           value={this.state.values}
           placeholder={this.props.placeholder}
           ref={this.select}
           isMulti={this.props.customProps && this.props.customProps.isMulti}
-          options={this.props.customProps && this.props.customProps.options}
           onChange={this._onChange}
           onBlur={this._onBlur}
           isClearable={this.props.customProps && this.props.customProps.isClearable}
@@ -108,10 +114,7 @@ class ComboBoxField extends React.Component<IComboBoxFieldPropsType, IComboBoxFi
   private _onChange(values: any) {
     const ids = values && (
       this.props.customProps && this.props.customProps.isMulti ?
-        values
-          .map((value: IReactSelectOption) => value.value)
-          .filter((value: string | number) => value !== undefined) :
-        values.value
+        values.map((value: IReactSelectOption) => value.value) : values.value
     );
     this.setState({values: this.props.customProps && this.props.customProps.isMulti ? values : [values]});
     if (this.props.onChange)
@@ -138,4 +141,4 @@ class ComboBoxField extends React.Component<IComboBoxFieldPropsType, IComboBoxFi
   }
 }
 
-export default ComboBoxField;
+export default AsyncComboBoxField;
