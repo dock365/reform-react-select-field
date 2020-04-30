@@ -3,6 +3,7 @@ import { IComboBoxFieldState } from './IComboBoxFieldState';
 import Select from 'react-select';
 import { IFieldRenderProps } from '@dock365/reform';
 import { FormFieldErrors } from '../FormFieldErrors/FormFieldErrors';
+import { labelStyle, selectorStyles } from "./styles";
 
 export interface IReactSelectOption {
   label: string;
@@ -87,7 +88,7 @@ class ComboBoxField extends React.Component<IComboBoxFieldPropsType, IComboBoxFi
   public render(): JSX.Element {
     return (
       <div className="reformReactSelectField">
-        {this.props.label && <label htmlFor="">{this.props.label}</label>}
+        {this.props.label && <label htmlFor="" style={labelStyle}>{this.props.label}</label>}
         <Select
           closeMenuOnSelect={this.props.customProps && this.props.customProps.closeMenuOnSelect}
           value={this.state.values}
@@ -99,6 +100,7 @@ class ComboBoxField extends React.Component<IComboBoxFieldPropsType, IComboBoxFi
           onBlur={this._onBlur}
           isClearable={this.props.customProps && this.props.customProps.isClearable}
           isDisabled={this.props.readOnly}
+          styles={selectorStyles}
         />
         <FormFieldErrors errors={this.props.errors}/>
       </div>

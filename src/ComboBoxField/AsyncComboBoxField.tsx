@@ -1,10 +1,10 @@
-import * as React from 'react';
+import React from 'react';
 import { IComboBoxFieldState } from './IComboBoxFieldState';
-import Select from 'react-select';
 import AsyncSelect from 'react-select/async';
 import { IFieldRenderProps } from '@dock365/reform';
 import { FormFieldErrors } from '../FormFieldErrors/FormFieldErrors';
 import { InputActionMeta, OptionsType } from "react-select/src/types";
+import { labelStyle, selectorStyles } from "./styles";
 
 export interface IReactSelectOption {
   label: string;
@@ -19,6 +19,8 @@ export interface IAsyncComboBoxFieldPropType extends IFieldRenderProps {
     loadOptions: (inputValue: string, callback: ((options: OptionsType<IReactSelectOption>) => void)) => Promise<any>;
     onInputChange: (newValue: string, actionMeta: InputActionMeta) => void;
     selectedValue?: IReactSelectOption[];
+    defaultOptions?: OptionsType<IReactSelectOption> | boolean;
+    getInitialValues: (id: (number | string)[]) => Promise<IReactSelectOption[]>;
   };
 }
 
@@ -30,7 +32,6 @@ class AsyncComboBoxField extends React.Component<IAsyncComboBoxFieldPropType, IC
     },
   };
   private select = React.createRef<any>();
-  private unknownOption = {value: undefined, label: "unknown"};
 
   constructor(props: IAsyncComboBoxFieldPropType) {
     super(props);
@@ -39,6 +40,16 @@ class AsyncComboBoxField extends React.Component<IAsyncComboBoxFieldPropType, IC
     };
     this._onChange = this._onChange.bind(this);
     this._onBlur = this._onBlur.bind(this);
+  }
+
+  public componentDidMount(): void {
+    if (this.props.value && this.props.customProps.getInitialValues) {
+      const value: number[] = this.props.customProps.isMulti ? this.props.value : [this.props.value];
+      if (value.length) {
+        this.props.customProps.getInitialValues(value)
+          .then(options => this.setState({values: options}));
+      }
+    }
   }
 
   public componentDidUpdate(prevProps: IAsyncComboBoxFieldPropType) {
@@ -53,11 +64,12 @@ class AsyncComboBoxField extends React.Component<IAsyncComboBoxFieldPropType, IC
   public render(): JSX.Element {
     return (
       <div className="reformReactSelectField">
-        {this.props.label && <label htmlFor="">{this.props.label}</label>}
+        {this.props.label && <label htmlFor="" style={labelStyle}>{this.props.label}</label>}
         <AsyncSelect
           cacheOptions
           loadOptions={this.props.customProps && this.props.customProps.loadOptions}
           onInputChange={this.props.customProps && this.props.customProps.onInputChange}
+          defaultOptions={this.props.customProps && this.props.customProps.defaultOptions}
 
           closeMenuOnSelect={this.props.customProps && this.props.customProps.closeMenuOnSelect}
           value={this.state.values}
@@ -68,6 +80,7 @@ class AsyncComboBoxField extends React.Component<IAsyncComboBoxFieldPropType, IC
           onBlur={this._onBlur}
           isClearable={this.props.customProps && this.props.customProps.isClearable}
           isDisabled={this.props.readOnly}
+          styles={selectorStyles}
         />
         <FormFieldErrors errors={this.props.errors}/>
       </div>
