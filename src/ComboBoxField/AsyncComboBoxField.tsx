@@ -5,6 +5,7 @@ import { IFieldRenderProps } from '@dock365/reform';
 import { FormFieldErrors } from '../FormFieldErrors/FormFieldErrors';
 import { InputActionMeta, OptionsType } from "react-select/src/types";
 import { labelStyle, selectorStyles } from "./styles";
+import { Option } from "react-select/src/filters";
 
 export interface IReactSelectOption {
   label: string;
@@ -21,6 +22,7 @@ export interface IAsyncComboBoxFieldPropType extends IFieldRenderProps {
     selectedValue?: IReactSelectOption[];
     defaultOptions?: OptionsType<IReactSelectOption> | boolean;
     getInitialValues: (id: (number | string)[]) => Promise<IReactSelectOption[]>;
+    excludedItems?: (number | string)[];
   };
 }
 
@@ -59,6 +61,10 @@ class AsyncComboBoxField extends React.Component<IAsyncComboBoxFieldPropType, IC
     ) {
       this.setState({values: this.props.customProps.selectedValue});
     }
+
+    if (prevProps.value && !this.props.value) {
+      this.setState({values: []});
+    }
   }
 
   public render(): JSX.Element {
@@ -81,11 +87,20 @@ class AsyncComboBoxField extends React.Component<IAsyncComboBoxFieldPropType, IC
           isClearable={this.props.customProps && this.props.customProps.isClearable}
           isDisabled={this.props.readOnly}
           styles={selectorStyles}
+          filterOption={this.props.customProps.excludedItems && this._excludeExcludedItems}
         />
         <FormFieldErrors errors={this.props.errors}/>
       </div>
     );
   }
+
+  private _excludeExcludedItems = (option: Option, rawInput: string) => {
+    if (this.props.customProps.excludedItems) {
+      return !this.props.customProps.excludedItems.some(id => id === option.value);
+    }
+
+    return true;
+  };
 
   private _onChange(values: any) {
     const ids = values && (
